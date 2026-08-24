@@ -1,0 +1,18 @@
+# System & OS files
+.DS_Store
+Thumbs.db
+
+# Node.js
+node_modules/
+npm-debug.log*
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+
+# CI / Jenkins Artifacts & logs
+*.log
+ctm-deploy-reports/

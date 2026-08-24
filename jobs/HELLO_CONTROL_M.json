@@ -1,0 +1,24 @@
+{
+  "Defaults": {
+    "Application": "DEMO_APP",
+    "SubApplication": "JOBS_AS_CODE",
+    "RunAs": "ctmuser",
+    "Host": "ctm-agent-linux"
+  },
+  "SAMPLE_AUTOMATION_FOLDER": {
+    "Type": "Folder",
+    "ControlmServer": "Control-M",
+    "OrderMethod": "Manual",
+    "HELLO_CONTROL_M": {
+      "Type": "Job:Script",
+      "FileName": "hello_control_m.sh",
+      "FilePath": "/opt/controlm/scripts",
+      "RunAs": "ctmuser",
+      "Host": "ctm-agent-linux",
+      "Description": "Demo Hello World script managed via Jobs-as-Code CI/CD",
+      "When": {
+        "Schedule": "Never"
+      }
+    }
+  }
+}

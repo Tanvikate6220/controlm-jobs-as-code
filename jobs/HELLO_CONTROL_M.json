@@ -1,7 +1,7 @@
 {
   "Defaults": {
     "Application": "DEMO_APP",
-    "SubApplication": "JOBS_AS_CODE",
+    "SubApplication": "JOBS_AS_CODE_V2",
     "RunAs": "ctmuser",
     "Host": "ctm-agent-linux"
   },
@@ -15,7 +15,7 @@
       "FilePath": "/opt/controlm/scripts",
       "RunAs": "ctmuser",
       "Host": "ctm-agent-linux",
-      "Description": "Demo Hello World script managed via Jobs-as-Code CI/CD",
+      "Description": "Updated Hello World script with v2 configuration",
       "When": {
         "Schedule": "Never"
       }

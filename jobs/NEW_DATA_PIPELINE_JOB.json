@@ -1,0 +1,24 @@
+{
+  "Defaults": {
+    "Application": "DATA_INTELLIGENCE",
+    "SubApplication": "ETL",
+    "RunAs": "ctmuser",
+    "Host": "ctm-agent-linux"
+  },
+  "DATA_PIPELINE_FOLDER": {
+    "Type": "Folder",
+    "ControlmServer": "Control-M",
+    "OrderMethod": "Manual",
+    "ETL_DAILY_PROCESS": {
+      "Type": "Job:Script",
+      "FileName": "run_etl_daily.sh",
+      "FilePath": "/opt/controlm/scripts",
+      "RunAs": "ctmuser",
+      "Host": "ctm-agent-linux",
+      "Description": "Dynamic ETL Data Processing Job added via Git push",
+      "When": {
+        "Schedule": "Never"
+      }
+    }
+  }
+}

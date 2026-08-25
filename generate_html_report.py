@@ -23,7 +23,7 @@ html_content = r"""<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Comprehensive Technical Architecture & Step-by-Step Delivery Report: Control-M Jobs-as-Code CI/CD</title>
+<title>Control-M Jobs-as-Code CI/CD Automation - Technical Report</title>
 <style>
     :root {
         --primary: #0056b3;
@@ -49,13 +49,13 @@ html_content = r"""<!DOCTYPE html>
     .header-banner {
         background: linear-gradient(135deg, #002b5c 0%, #0056b3 50%, #007bff 100%);
         color: white;
-        padding: 40px 35px;
+        padding: 35px 30px;
         border-radius: 12px;
         margin-bottom: 35px;
         box-shadow: 0 10px 25px rgba(0, 56, 117, 0.25);
     }
     .header-banner h1 {
-        margin: 0 0 12px 0;
+        margin: 0 0 8px 0;
         font-size: 2.3em;
         font-weight: 700;
         color: #ffffff;
@@ -68,11 +68,11 @@ html_content = r"""<!DOCTYPE html>
     }
     .meta-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 15px;
-        margin-top: 25px;
+        margin-top: 22px;
         background: rgba(255, 255, 255, 0.15);
-        padding: 18px 22px;
+        padding: 16px 20px;
         border-radius: 8px;
     }
     .meta-item strong {
@@ -81,6 +81,11 @@ html_content = r"""<!DOCTYPE html>
         font-size: 11px;
         text-transform: uppercase;
         letter-spacing: 0.8px;
+        margin-bottom: 3px;
+    }
+    .meta-item span {
+        font-size: 15px;
+        font-weight: 600;
     }
     h2 {
         color: var(--primary-dark);
@@ -247,7 +252,7 @@ html_content = r"""<!DOCTYPE html>
     }
     @media print {
         body { max-width: 100%; margin: 0; padding: 15px; font-size: 12px; }
-        .header-banner { padding: 25px; }
+        .header-banner { padding: 22px; }
         .img-box img { max-width: 95%; page-break-inside: avoid; }
         pre { font-size: 11px; padding: 12px; page-break-inside: avoid; }
         .step-box { page-break-inside: avoid; }
@@ -257,23 +262,23 @@ html_content = r"""<!DOCTYPE html>
 <body>
 
 <div class="header-banner">
-    <h1>🚀 Complete Technical Architecture & Delivery Report</h1>
-    <p>End-to-End Implementation of Dynamic Control-M Jobs-as-Code CI/CD Automation</p>
+    <h1>🚀 Control-M Jobs-as-Code CI/CD Automation</h1>
+    <p>End-to-End Dynamic Workload Automation Architecture & Delivery</p>
     <div class="meta-grid">
         <div class="meta-item">
-            <strong>Author / Technical Lead</strong>
-            Tanvi Kate
+            <strong>Name</strong>
+            <span>Tanvi Kate</span>
         </div>
         <div class="meta-item">
-            <strong>Professional Role</strong>
-            BMC Engineer A&amp;A
+            <strong>Designation</strong>
+            <span>BMC Engineer A&amp;A</span>
         </div>
         <div class="meta-item">
-            <strong>Target Enterprise Environment</strong>
-            Control-M 9.0.22 (Server: M0988, Agent: m0988)
+            <strong>Target Environment</strong>
+            <span>Control-M 9.0.22 (M0988)</span>
         </div>
         <div class="meta-item">
-            <strong>Delivery & Verification Status</strong>
+            <strong>Status</strong>
             <span class="badge">100% PRODUCTION VERIFIED</span>
         </div>
     </div>
@@ -749,8 +754,7 @@ git push origin main
 
 <hr>
 <p style="text-align: center; color: #64748b; font-size: 13px; margin-top: 30px;">
-    <strong>Control-M Jobs-as-Code Technical Delivery Documentation</strong><br>
-    Engineered & Documented by <strong>Tanvi Kate</strong> &bull; BMC Engineer A&A &bull; 2026
+    <strong>Tanvi Kate &bull; BMC Engineer A&amp;A</strong> &bull; Control-M 9.0.22
 </p>
 
 </body>
@@ -769,4 +773,4 @@ output_html_path = desktop_folder / "ControlM_Jobs_As_Code_Report.html"
 with open(output_html_path, "w", encoding="utf-8") as f:
     f.write(html_content)
 
-print(f"Successfully generated comprehensive HTML report at: {output_html_path}")
+print(f"Successfully generated clean header HTML report at: {output_html_path}")

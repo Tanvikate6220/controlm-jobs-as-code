@@ -20,7 +20,6 @@ pipeline {
     }
 
     environment {
-        // Control-M Endpoint & Credential ID stored securely in Jenkins Credentials Store
         CTM_ENV = "${params.TARGET_ENV}"
         PYTHONUNBUFFERED = "1"
     }
@@ -32,7 +31,6 @@ pipeline {
                 echo " Starting Control-M Jobs-as-Code CI/CD Pipeline"
                 echo " Environment: ${params.TARGET_ENV} | Mode: ${params.DEPLOY_MODE}"
                 echo "=========================================================="
-                // Workspace checkout happens automatically in Jenkins SCM pipeline
             }
         }
 
@@ -40,8 +38,11 @@ pipeline {
             steps {
                 script {
                     echo "--> Dynamically discovering and validating Control-M Job definitions..."
-                    // Zero hardcoded job names - dynamic discovery handled by engine
-                    sh 'python3 engine/ctm_pipeline_engine.py --mode ${DEPLOY_MODE} --action build || python engine/ctm_pipeline_engine.py --mode %DEPLOY_MODE% --action build'
+                    if (isUnix()) {
+                        sh "python3 engine/ctm_pipeline_engine.py --mode ${params.DEPLOY_MODE} --action build"
+                    } else {
+                        bat "python engine/ctm_pipeline_engine.py --mode %DEPLOY_MODE% --action build"
+                    }
                 }
             }
         }
@@ -53,7 +54,11 @@ pipeline {
             steps {
                 script {
                     echo "--> Deploying verified definitions to Control-M ${params.TARGET_ENV}..."
-                    sh 'python3 engine/ctm_pipeline_engine.py --mode ${DEPLOY_MODE} --action deploy || python engine/ctm_pipeline_engine.py --mode %DEPLOY_MODE% --action deploy'
+                    if (isUnix()) {
+                        sh "python3 engine/ctm_pipeline_engine.py --mode ${params.DEPLOY_MODE} --action deploy"
+                    } else {
+                        bat "python engine/ctm_pipeline_engine.py --mode %DEPLOY_MODE% --action deploy"
+                    }
                 }
             }
         }

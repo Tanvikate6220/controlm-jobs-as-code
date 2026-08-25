@@ -1,21 +1,20 @@
 {
   "Defaults": {
     "Application": "DEMO_APP",
-    "SubApplication": "JOBS_AS_CODE_V2",
-    "RunAs": "ctmuser",
-    "Host": "ctm-agent-linux"
+    "SubApplication": "JOBS_AS_CODE",
+    "RunAs": "A3807",
+    "Host": "m0988"
   },
   "SAMPLE_AUTOMATION_FOLDER": {
     "Type": "Folder",
-    "ControlmServer": "Control-M",
+    "ControlmServer": "M0988",
     "OrderMethod": "Manual",
     "HELLO_CONTROL_M": {
-      "Type": "Job:Script",
-      "FileName": "hello_control_m.sh",
-      "FilePath": "/opt/controlm/scripts",
-      "RunAs": "ctmuser",
-      "Host": "ctm-agent-linux",
-      "Description": "Updated Hello World script with v2 configuration",
+      "Type": "Job:Command",
+      "Command": "echo Hello from Control-M Jobs-as-Code CI/CD Pipeline! & hostname",
+      "RunAs": "A3807",
+      "Host": "m0988",
+      "Description": "Demo Hello World job deployed dynamically via Jobs-as-Code CI/CD",
       "When": {
         "Schedule": "Never"
       }

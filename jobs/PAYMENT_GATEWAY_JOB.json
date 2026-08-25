@@ -1,0 +1,24 @@
+{
+  "Defaults": {
+    "Application": "FINANCE_CORE",
+    "SubApplication": "PAYMENTS",
+    "RunAs": "ctmuser",
+    "Host": "ctm-agent-linux"
+  },
+  "PAYMENT_PROCESSING_FOLDER": {
+    "Type": "Folder",
+    "ControlmServer": "Control-M",
+    "OrderMethod": "Manual",
+    "PROCESS_DAILY_PAYMENTS": {
+      "Type": "Job:Script",
+      "FileName": "process_payments.sh",
+      "FilePath": "/opt/controlm/scripts",
+      "RunAs": "ctmuser",
+      "Host": "ctm-agent-linux",
+      "Description": "Automatic Payment Processor deployed dynamically via Jenkins CI/CD",
+      "When": {
+        "Schedule": "Never"
+      }
+    }
+  }
+}

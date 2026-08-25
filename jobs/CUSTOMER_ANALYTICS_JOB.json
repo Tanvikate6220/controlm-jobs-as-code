@@ -1,0 +1,23 @@
+{
+  "Defaults": {
+    "Application": "DATA_ANALYTICS",
+    "SubApplication": "CUSTOMER_INSIGHTS",
+    "RunAs": "A3807",
+    "Host": "m0988"
+  },
+  "ANALYTICS_PROCESSING_FOLDER": {
+    "Type": "Folder",
+    "ControlmServer": "M0988",
+    "OrderMethod": "Manual",
+    "RUN_CUSTOMER_ANALYTICS": {
+      "Type": "Job:Command",
+      "Command": "echo Running Customer Analytics Machine Learning Model... & echo Processing 5000 records completed successfully! & hostname",
+      "RunAs": "A3807",
+      "Host": "m0988",
+      "Description": "Customer insights aggregation job deployed via CI/CD",
+      "When": {
+        "Schedule": "Never"
+      }
+    }
+  }
+}

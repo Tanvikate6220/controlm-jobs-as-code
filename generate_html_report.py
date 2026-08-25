@@ -23,7 +23,7 @@ html_content = r"""<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Control-M Jobs-as-Code CI/CD Automation - Technical Report</title>
+<title>Control-M Jobs-as-Code CI/CD Automation</title>
 <style>
     :root {
         --primary: #0056b3;
@@ -49,31 +49,27 @@ html_content = r"""<!DOCTYPE html>
     .header-banner {
         background: linear-gradient(135deg, #002b5c 0%, #0056b3 50%, #007bff 100%);
         color: white;
-        padding: 35px 30px;
+        padding: 30px 30px;
         border-radius: 12px;
         margin-bottom: 35px;
         box-shadow: 0 10px 25px rgba(0, 56, 117, 0.25);
     }
     .header-banner h1 {
-        margin: 0 0 8px 0;
-        font-size: 2.3em;
+        margin: 0;
+        font-size: 2.2em;
         font-weight: 700;
         color: #ffffff;
         letter-spacing: -0.5px;
     }
-    .header-banner p {
-        margin: 0;
-        font-size: 1.15em;
-        opacity: 0.92;
-    }
     .meta-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
         gap: 15px;
-        margin-top: 22px;
+        margin-top: 20px;
         background: rgba(255, 255, 255, 0.15);
-        padding: 16px 20px;
+        padding: 14px 20px;
         border-radius: 8px;
+        max-width: 500px;
     }
     .meta-item strong {
         display: block;
@@ -81,7 +77,7 @@ html_content = r"""<!DOCTYPE html>
         font-size: 11px;
         text-transform: uppercase;
         letter-spacing: 0.8px;
-        margin-bottom: 3px;
+        margin-bottom: 2px;
     }
     .meta-item span {
         font-size: 15px;
@@ -225,15 +221,6 @@ html_content = r"""<!DOCTYPE html>
         margin-top: 12px;
         font-weight: 600;
     }
-    .badge {
-        display: inline-block;
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 600;
-        background-color: var(--success);
-        color: white;
-    }
     .key-points {
         list-style: none;
         padding-left: 0;
@@ -252,7 +239,7 @@ html_content = r"""<!DOCTYPE html>
     }
     @media print {
         body { max-width: 100%; margin: 0; padding: 15px; font-size: 12px; }
-        .header-banner { padding: 22px; }
+        .header-banner { padding: 20px; }
         .img-box img { max-width: 95%; page-break-inside: avoid; }
         pre { font-size: 11px; padding: 12px; page-break-inside: avoid; }
         .step-box { page-break-inside: avoid; }
@@ -263,7 +250,6 @@ html_content = r"""<!DOCTYPE html>
 
 <div class="header-banner">
     <h1>🚀 Control-M Jobs-as-Code CI/CD Automation</h1>
-    <p>End-to-End Dynamic Workload Automation Architecture & Delivery</p>
     <div class="meta-grid">
         <div class="meta-item">
             <strong>Name</strong>
@@ -272,14 +258,6 @@ html_content = r"""<!DOCTYPE html>
         <div class="meta-item">
             <strong>Designation</strong>
             <span>BMC Engineer A&amp;A</span>
-        </div>
-        <div class="meta-item">
-            <strong>Target Environment</strong>
-            <span>Control-M 9.0.22 (M0988)</span>
-        </div>
-        <div class="meta-item">
-            <strong>Status</strong>
-            <span class="badge">100% PRODUCTION VERIFIED</span>
         </div>
     </div>
 </div>
@@ -752,11 +730,6 @@ git revert &lt;faulty_commit_id&gt;
 git push origin main
 # Jenkins automatically detects the reverted JSON and redeploys the previous known-good state to Control-M!</code></pre>
 
-<hr>
-<p style="text-align: center; color: #64748b; font-size: 13px; margin-top: 30px;">
-    <strong>Tanvi Kate &bull; BMC Engineer A&amp;A</strong> &bull; Control-M 9.0.22
-</p>
-
 </body>
 </html>
 """
@@ -773,4 +746,4 @@ output_html_path = desktop_folder / "ControlM_Jobs_As_Code_Report.html"
 with open(output_html_path, "w", encoding="utf-8") as f:
     f.write(html_content)
 
-print(f"Successfully generated clean header HTML report at: {output_html_path}")
+print(f"Successfully generated clean minimal header report at: {output_html_path}")

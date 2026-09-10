@@ -1,0 +1,23 @@
+{
+  "Defaults": {
+    "Application": "HR_PAYROLL",
+    "SubApplication": "MONTHLY_SALARY",
+    "RunAs": "A3807",
+    "Host": "m0988"
+  },
+  "PAYROLL_FOLDER": {
+    "Type": "Folder",
+    "ControlmServer": "M0988",
+    "OrderMethod": "Manual",
+    "PROCESS_MONTHLY_PAYROLL": {
+      "Type": "Job:Command",
+      "Command": "echo === AUTOMATED PAYROLL PROCESSING === & echo All salaries processed cleanly & hostname",
+      "RunAs": "A3807",
+      "Host": "m0988",
+      "Description": "Automated payroll batch job deployed directly by Jenkins",
+      "When": {
+        "Schedule": "Never"
+      }
+    }
+  }
+}

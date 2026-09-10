@@ -1,0 +1,23 @@
+{
+  "Defaults": {
+    "Application": "ENTERPRISE_DEMO",
+    "SubApplication": "LIVE_SHOWCASE",
+    "RunAs": "A3807",
+    "Host": "m0988"
+  },
+  "LIVE_DEMO_FOLDER": {
+    "Type": "Folder",
+    "ControlmServer": "M0988",
+    "OrderMethod": "Manual",
+    "RUN_LIVE_DEMO": {
+      "Type": "Job:Command",
+      "Command": "echo === CONTROL-M JOBS-AS-CODE LIVE DEMO === & echo Job executed successfully by Tanvi Kate & hostname & echo Completed at %TIME%",
+      "RunAs": "A3807",
+      "Host": "m0988",
+      "Description": "Live demonstration job deployed dynamically via CI/CD",
+      "When": {
+        "Schedule": "Never"
+      }
+    }
+  }
+}

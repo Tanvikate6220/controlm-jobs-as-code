@@ -158,15 +158,16 @@ class ControlMAutomationEngine:
             output = res.stdout or res.stderr
             if "deploymentFile" in output or "deployed" in output.lower() or "success" in output.lower():
                 print(f"  [OK] Successfully deployed to Control-M EM:\n{output.strip()}")
-            elif "No environment is set" in output:
-                print(f"  [SIMULATED] Deployment validated. Configure 'ctm env add' to push directly to Control-M EM.")
-            elif res.returncode != 0:
+                self.audit_log.append({"file": file_path.name, "stage": "DEPLOY", "status": "SUCCESS", "detail": "Deployed to Control-M"})
+                return True
+            else:
                 print(f"  [WARN] ctm deploy response: {output.strip()}")
+                self.audit_log.append({"file": file_path.name, "stage": "DEPLOY", "status": "WARN", "detail": output.strip()})
+                return True
         except Exception as e:
-            print(f"  [INFO] Deployed ({e}).")
-
-        self.audit_log.append({"file": file_path.name, "stage": "DEPLOY", "status": "SUCCESS", "detail": "Deployed to Control-M"})
-        return True
+            print(f"  [ERROR] Deployment failed ({e}).")
+            self.audit_log.append({"file": file_path.name, "stage": "DEPLOY", "status": "FAILED", "detail": str(e)})
+            return False
 
     def write_summary_report(self) -> None:
         """Generates audit report in JSON & Markdown."""

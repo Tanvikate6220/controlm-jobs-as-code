@@ -5,7 +5,7 @@ pipeline {
         choice(
             name: 'DEPLOY_MODE',
             choices: ['delta', 'all'],
-            description: 'delta = Only deploy new/modified JSON jobs in this commit; all = Deploy all jobs in repository'
+            description: 'delta = Only deploy new/modified JSON jobs in this commit; all = Full repo sync'
         )
         choice(
             name: 'TARGET_ENV',
@@ -22,15 +22,13 @@ pipeline {
     environment {
         CTM_ENV = "${params.TARGET_ENV}"
         PYTHONUNBUFFERED = "1"
+        PATH = "C:\\Users\\Tanvi.kate\\AppData\\Roaming\\npm;C:\\Program Files\\nodejs;C:\\Program Files\\Git\\cmd;C:\\Users\\Tanvi.kate\\AppData\\Local\\Programs\\Python\\Python312;${env.PATH}"
     }
 
     stages {
         stage('Checkout & Setup') {
             steps {
-                echo "=========================================================="
-                echo " Starting Control-M Jobs-as-Code CI/CD Pipeline"
-                echo " Environment: ${params.TARGET_ENV} | Mode: ${params.DEPLOY_MODE}"
-                echo "=========================================================="
+                echo "Starting Control-M Jobs-as-Code Pipeline for Environment: ${params.TARGET_ENV} | Mode: ${params.DEPLOY_MODE}"
             }
         }
 
@@ -70,14 +68,10 @@ pipeline {
             archiveArtifacts artifacts: 'ctm-deploy-reports/**', allowEmptyArchive: true
         }
         success {
-            echo "=========================================================="
-            echo " SUCCESS: Control-M Jobs-as-Code pipeline completed cleanly!"
-            echo "=========================================================="
+            echo "SUCCESS: Control-M Jobs-as-Code pipeline completed cleanly!"
         }
         failure {
-            echo "=========================================================="
-            echo " FAILED: One or more jobs failed validation or deployment."
-            echo "=========================================================="
+            echo "FAILED: One or more jobs failed validation or deployment."
         }
     }
 }

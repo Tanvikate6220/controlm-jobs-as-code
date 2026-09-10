@@ -1,0 +1,23 @@
+{
+  "Defaults": {
+    "Application": "MARKETING_CORE",
+    "SubApplication": "CAMPAIGN_2026",
+    "RunAs": "A3807",
+    "Host": "m0988"
+  },
+  "MARKETING_CAMPAIGN_FOLDER": {
+    "Type": "Folder",
+    "ControlmServer": "M0988",
+    "OrderMethod": "Manual",
+    "SEND_MARKETING_EMAILS": {
+      "Type": "Job:Command",
+      "Command": "echo Sending promotional emails & hostname",
+      "RunAs": "A3807",
+      "Host": "m0988",
+      "Description": "Planning-only job definition configured via Jenkins",
+      "When": {
+        "Schedule": "Never"
+      }
+    }
+  }
+}

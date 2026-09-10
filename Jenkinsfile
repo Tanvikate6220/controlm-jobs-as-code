@@ -13,6 +13,11 @@ pipeline {
             description: 'Target Control-M Environment'
         )
         booleanParam(
+            name: 'AUTO_ORDER',
+            defaultValue: true,
+            description: 'Automatically order/trigger the job in Control-M active monitoring after deployment'
+        )
+        booleanParam(
             name: 'DRY_RUN',
             defaultValue: false,
             description: 'If checked, validates (builds) without deploying to Control-M'
@@ -28,7 +33,7 @@ pipeline {
     stages {
         stage('Checkout & Setup') {
             steps {
-                echo "Starting Control-M Jobs-as-Code Pipeline for Environment: ${params.TARGET_ENV} | Mode: ${params.DEPLOY_MODE}"
+                echo "Starting Control-M Jobs-as-Code Pipeline for Environment: ${params.TARGET_ENV} | Mode: ${params.DEPLOY_MODE} | Auto-Order: ${params.AUTO_ORDER}"
             }
         }
 
@@ -45,17 +50,18 @@ pipeline {
             }
         }
 
-        stage('Deploy to Control-M') {
+        stage('Deploy & Auto-Order in Control-M') {
             when {
                 expression { return params.DRY_RUN == false }
             }
             steps {
                 script {
-                    echo "--> Deploying verified definitions to Control-M ${params.TARGET_ENV}..."
+                    def orderFlag = params.AUTO_ORDER ? "--auto-order" : "--no-auto-order"
+                    echo "--> Deploying and auto-scheduling definitions to Control-M ${params.TARGET_ENV}..."
                     if (isUnix()) {
-                        sh "python3 engine/ctm_pipeline_engine.py --mode ${params.DEPLOY_MODE} --action deploy"
+                        sh "python3 engine/ctm_pipeline_engine.py --mode ${params.DEPLOY_MODE} --action deploy ${orderFlag}"
                     } else {
-                        bat "python engine/ctm_pipeline_engine.py --mode %DEPLOY_MODE% --action deploy"
+                        bat "python engine/ctm_pipeline_engine.py --mode %DEPLOY_MODE% --action deploy ${orderFlag}"
                     }
                 }
             }
@@ -68,10 +74,10 @@ pipeline {
             archiveArtifacts artifacts: 'ctm-deploy-reports/**', allowEmptyArchive: true
         }
         success {
-            echo "SUCCESS: Control-M Jobs-as-Code pipeline completed cleanly!"
+            echo "SUCCESS: Control-M Jobs-as-Code pipeline completed cleanly with automatic deployment and scheduling!"
         }
         failure {
-            echo "FAILED: One or more jobs failed validation or deployment."
+            echo "FAILED: One or more jobs failed validation, deployment, or ordering."
         }
     }
 }

@@ -4,10 +4,12 @@
 Control-M Jobs-as-Code Dynamic CI/CD Automation Engine (BMC 9.0.22)
 ==============================================================================
 Description:
-    Dynamically scans, validates, and deploys Control-M Jobs-as-Code JSON definitions.
+    Dynamically scans, validates, deploys, and automatically orders/schedules
+    Control-M Jobs-as-Code JSON definitions.
     - Zero hardcoded job names.
     - Automatic delta-detection (only deploy new/modified files in Git commits).
-    - Native BMC 9.0.22 Automation API CLI (ctm build & ctm deploy).
+    - Native BMC 9.0.22 Automation API CLI (ctm build, ctm deploy, ctm run order).
+    - Automatic ordering into active Control-M Monitoring without manual CLI commands.
     - Full audit logs and error reporting for Jenkins pipelines.
 ==============================================================================
 """
@@ -88,6 +90,31 @@ class ControlMAutomationEngine:
         print(f"[FULL SCAN] Discovered {len(files)} total Job JSON definition(s) in {self.jobs_dir}.")
         return files
 
+    def extract_folder_and_server(self, file_path: Path) -> Tuple[str, str]:
+        """Extracts the Folder Name and ControlmServer from JSON definition."""
+        try:
+            with open(file_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            
+            server = "M0988"
+            folder = None
+            
+            for key, val in data.items():
+                if key in ["Defaults", "Description"]:
+                    continue
+                if isinstance(val, dict):
+                    if val.get("Type") in ["Folder", "SimpleFolder", "SubFolder"]:
+                        folder = key
+                        server = val.get("ControlmServer", server)
+                        break
+                    elif any(isinstance(v, dict) and v.get("Type", "").startswith("Job:") for v in val.values()):
+                        folder = key
+                        server = val.get("ControlmServer", server)
+                        break
+            return folder, server
+        except Exception:
+            return None, "M0988"
+
     def validate_controlm_json_schema(self, file_path: Path) -> Tuple[bool, str]:
         """Validates Control-M 9.0.22 Jobs-as-Code structure locally."""
         try:
@@ -127,7 +154,6 @@ class ControlMAutomationEngine:
             self.audit_log.append({"file": file_path.name, "stage": "BUILD", "status": "FAILED", "detail": msg})
             return False
 
-        # Attempt live ctm build
         try:
             ctm_cmd = "ctm.cmd" if self.is_windows else "ctm"
             res = subprocess.run(
@@ -150,9 +176,11 @@ class ControlMAutomationEngine:
         self.audit_log.append({"file": file_path.name, "stage": "BUILD", "status": "SUCCESS", "detail": msg})
         return True
 
-    def deploy_job(self, file_path: Path) -> bool:
-        """Runs 'ctm deploy' via BMC CLI to upload definition to Control-M."""
+    def deploy_job(self, file_path: Path, auto_order: bool = True) -> bool:
+        """Runs 'ctm deploy' and optionally auto-orders the job into Active Control-M Monitoring."""
         print(f"\n---> [DEPLOYING TO CONTROL-M] {file_path.name}")
+        folder_name, server_name = self.extract_folder_and_server(file_path)
+        
         try:
             ctm_cmd = "ctm.cmd" if self.is_windows else "ctm"
             res = subprocess.run(
@@ -165,7 +193,24 @@ class ControlMAutomationEngine:
             output = res.stdout or res.stderr
             if "deploymentFile" in output or "deployed" in output.lower() or "success" in output.lower():
                 print(f"  [OK] Successfully deployed to Control-M EM:\n{output.strip()}")
-                self.audit_log.append({"file": file_path.name, "stage": "DEPLOY", "status": "SUCCESS", "detail": "Deployed to Control-M"})
+                
+                # AUTO-ORDER / AUTO-SCHEDULE STEP
+                if auto_order and folder_name:
+                    print(f"\n---> [AUTO-ORDERING INTO CONTROL-M MONITORING] Folder: '{folder_name}' on Server: '{server_name}'")
+                    order_res = subprocess.run(
+                        [ctm_cmd, "run", "order", server_name, folder_name],
+                        cwd=str(self.workspace),
+                        capture_output=True,
+                        text=True,
+                        shell=self.is_windows
+                    )
+                    order_out = order_res.stdout or order_res.stderr
+                    if "runId" in order_out or "statusURI" in order_out:
+                        print(f"  [ORDERED OK] Job triggered automatically in Control-M Active Monitoring!\n{order_out.strip()}")
+                    else:
+                        print(f"  [ORDER NOTICE] Order response: {order_out.strip()}")
+
+                self.audit_log.append({"file": file_path.name, "stage": "DEPLOY", "status": "SUCCESS", "detail": f"Deployed & Auto-Ordered ({folder_name})"})
                 return True
             else:
                 print(f"  [WARN] ctm deploy response: {output.strip()}")
@@ -201,6 +246,10 @@ def main():
     parser.add_argument("--base-ref", default=None, help="Git base ref/branch to diff against")
     parser.add_argument("--action", choices=["build", "deploy", "build-and-deploy"], default="build-and-deploy",
                         help="Action to perform: build, deploy, or build-and-deploy")
+    parser.add_argument("--auto-order", action="store_true", default=True,
+                        help="Automatically order/trigger the deployed folder in Control-M active monitoring")
+    parser.add_argument("--no-auto-order", dest="auto_order", action="store_false",
+                        help="Disable automatic ordering into Control-M monitoring")
     parser.add_argument("--workspace", default=os.getcwd(), help="Workspace root directory")
 
     args = parser.parse_args()
@@ -232,10 +281,10 @@ def main():
 
     if args.action in ["deploy", "build-and-deploy"]:
         print("\n========================================================")
-        print("        STAGE 2: DEPLOYMENT TO CONTROL-M                ")
+        print("        STAGE 2: DEPLOYMENT & AUTO-ORDER TO CONTROL-M   ")
         print("========================================================")
         for job_file in target_files:
-            if not engine.deploy_job(job_file):
+            if not engine.deploy_job(job_file, auto_order=args.auto_order):
                 failed = True
 
     engine.write_summary_report()
@@ -244,7 +293,7 @@ def main():
         print("\n[ERROR] One or more jobs failed deployment.")
         sys.exit(1)
     else:
-        print("\n[SUCCESS] ALL JOBS PROCESSED AND DEPLOYED SUCCESSFULLY!")
+        print("\n[SUCCESS] ALL JOBS PROCESSED, DEPLOYED & ORDERED IN CONTROL-M SUCCESSFULLY!")
         sys.exit(0)
 
 

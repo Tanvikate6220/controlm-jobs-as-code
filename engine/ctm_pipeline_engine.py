@@ -35,6 +35,7 @@ class ControlMAutomationEngine:
         self.log_dir = self.workspace / log_dir
         self.log_dir.mkdir(parents=True, exist_ok=True)
         self.audit_log: List[Dict[str, Any]] = []
+        self.is_windows = (os.name == "nt")
 
     def get_changed_files_from_git(self, base_ref: str = None) -> List[Path]:
         """Uses git diff to discover only NEW or MODIFIED JSON job definitions."""
@@ -45,6 +46,7 @@ class ControlMAutomationEngine:
                     cwd=str(self.workspace),
                     capture_output=True,
                     text=True,
+                    shell=self.is_windows,
                     check=True
                 ).stdout.strip()
 
@@ -60,6 +62,7 @@ class ControlMAutomationEngine:
                 cwd=str(self.workspace),
                 capture_output=True,
                 text=True,
+                shell=self.is_windows,
                 check=True
             )
 
@@ -126,11 +129,13 @@ class ControlMAutomationEngine:
 
         # Attempt live ctm build
         try:
+            ctm_cmd = "ctm.cmd" if self.is_windows else "ctm"
             res = subprocess.run(
-                ["ctm", "build", str(file_path)],
+                [ctm_cmd, "build", str(file_path)],
                 cwd=str(self.workspace),
                 capture_output=True,
-                text=True
+                text=True,
+                shell=self.is_windows
             )
             output = res.stdout or res.stderr
             if "deploymentFile" in output or "successful" in output.lower():
@@ -149,11 +154,13 @@ class ControlMAutomationEngine:
         """Runs 'ctm deploy' via BMC CLI to upload definition to Control-M."""
         print(f"\n---> [DEPLOYING TO CONTROL-M] {file_path.name}")
         try:
+            ctm_cmd = "ctm.cmd" if self.is_windows else "ctm"
             res = subprocess.run(
-                ["ctm", "deploy", str(file_path)],
+                [ctm_cmd, "deploy", str(file_path)],
                 cwd=str(self.workspace),
                 capture_output=True,
-                text=True
+                text=True,
+                shell=self.is_windows
             )
             output = res.stdout or res.stderr
             if "deploymentFile" in output or "deployed" in output.lower() or "success" in output.lower():

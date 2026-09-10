@@ -5,7 +5,7 @@ pipeline {
         choice(
             name: 'DEPLOY_MODE',
             choices: ['delta', 'all'],
-            description: 'delta = Only deploy new/modified JSON jobs in this commit; all = Full repo sync'
+            description: 'delta = Only configure new/modified JSON jobs in this commit; all = Full repo sync'
         )
         choice(
             name: 'TARGET_ENV',
@@ -13,14 +13,9 @@ pipeline {
             description: 'Target Control-M Environment'
         )
         booleanParam(
-            name: 'AUTO_ORDER',
-            defaultValue: true,
-            description: 'Automatically order/trigger the job in Control-M active monitoring after deployment'
-        )
-        booleanParam(
             name: 'DRY_RUN',
             defaultValue: false,
-            description: 'If checked, validates (builds) without deploying to Control-M'
+            description: 'If checked, validates (builds) without configuring in Control-M'
         )
     }
 
@@ -33,7 +28,7 @@ pipeline {
     stages {
         stage('Checkout & Setup') {
             steps {
-                echo "Starting Control-M Jobs-as-Code Pipeline for Environment: ${params.TARGET_ENV} | Mode: ${params.DEPLOY_MODE} | Auto-Order: ${params.AUTO_ORDER}"
+                echo "Starting Control-M Jobs-as-Code Pipeline for Environment: ${params.TARGET_ENV} | Mode: ${params.DEPLOY_MODE}"
             }
         }
 
@@ -50,18 +45,17 @@ pipeline {
             }
         }
 
-        stage('Deploy & Auto-Order in Control-M') {
+        stage('Configure in Control-M (Planning Domain)') {
             when {
                 expression { return params.DRY_RUN == false }
             }
             steps {
                 script {
-                    def orderFlag = params.AUTO_ORDER ? "--auto-order" : "--no-auto-order"
-                    echo "--> Deploying and auto-scheduling definitions to Control-M ${params.TARGET_ENV}..."
+                    echo "--> Configuring and saving definitions directly in Control-M Planning Domain (${params.TARGET_ENV})..."
                     if (isUnix()) {
-                        sh "python3 engine/ctm_pipeline_engine.py --mode ${params.DEPLOY_MODE} --action deploy ${orderFlag}"
+                        sh "python3 engine/ctm_pipeline_engine.py --mode ${params.DEPLOY_MODE} --action deploy"
                     } else {
-                        bat "python engine/ctm_pipeline_engine.py --mode %DEPLOY_MODE% --action deploy ${orderFlag}"
+                        bat "python engine/ctm_pipeline_engine.py --mode %DEPLOY_MODE% --action deploy"
                     }
                 }
             }
@@ -74,10 +68,10 @@ pipeline {
             archiveArtifacts artifacts: 'ctm-deploy-reports/**', allowEmptyArchive: true
         }
         success {
-            echo "SUCCESS: Control-M Jobs-as-Code pipeline completed cleanly with automatic deployment and scheduling!"
+            echo "SUCCESS: Control-M Jobs-as-Code pipeline completed cleanly! Jobs are now configured in the Planning Domain."
         }
         failure {
-            echo "FAILED: One or more jobs failed validation, deployment, or ordering."
+            echo "FAILED: One or more jobs failed validation or configuration in Planning."
         }
     }
 }

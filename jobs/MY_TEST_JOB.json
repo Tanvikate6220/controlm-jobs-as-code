@@ -1,0 +1,23 @@
+{
+  "Defaults": {
+    "Application": "MY_PRACTICE_APP",
+    "SubApplication": "SELF_TEST",
+    "RunAs": "A3807",
+    "Host": "m0988"
+  },
+  "MY_TEST_FOLDER": {
+    "Type": "Folder",
+    "ControlmServer": "M0988",
+    "OrderMethod": "Manual",
+    "RUN_MY_TEST": {
+      "Type": "Job:Command",
+      "Command": "echo === HANDS ON TEST SUCCESSFUL === & echo Executed by Tanvi Kate & hostname",
+      "RunAs": "A3807",
+      "Host": "m0988",
+      "Description": "Self-testing Control-M Jobs-as-Code pipeline",
+      "When": {
+        "Schedule": "Never"
+      }
+    }
+  }
+}

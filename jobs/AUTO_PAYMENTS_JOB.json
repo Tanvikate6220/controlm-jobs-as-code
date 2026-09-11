@@ -1,20 +1,29 @@
-﻿{
-  "Defaults": {
-    "Application": "FINANCE",
-    "SubApplication": "PAYMENTS",
-    "RunAs": "A3807",
-    "Host": "m0988"
-  },
+{
   "AUTO_PAYMENTS_FOLDER": {
     "Type": "Folder",
     "ControlmServer": "M0988",
     "OrderMethod": "Manual",
+    "RunAs": "A3807",
+    "SubApplication": "PAYMENTS",
+    "Application": "FINANCE",
     "PROCESS_PAYMENTS_JOB": {
       "Type": "Job:Command",
-      "Command": "echo [Automatic Test] Processing daily payments... & hostname",
+      "SubApplication": "PAYMENTS",
+      "Host": "m0988",
       "Description": "Zero-Touch Automated Payment Job",
+      "RunAs": "A3807",
+      "Application": "FINANCE",
+      "Command": "echo [Automatic Test] Processing daily payments... & hostname",
       "When": {
-        "Schedule": "Never"
+        "WeekDays": [
+          "NONE"
+        ],
+        "Months": [
+          "NONE"
+        ],
+        "MonthDays": [
+          "NONE"
+        ]
       }
     }
   }

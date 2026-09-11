@@ -1,0 +1,46 @@
+{
+  "AUTO_REPORT_FOLDERr": {
+    "Type": "Folder",
+    "ControlmServer": "M0988",
+    "ActiveRetentionPolicy": "CleanEndedOK",
+    "SubApplication": "DAILY",
+    "CreatedBy": "A3807",
+    "Application": "REPORTING",
+    "When": {
+      "RuleBasedCalendars": {
+        "Included": [
+          "EVERYDAY"
+        ],
+        "EVERYDAY": {
+          "Type": "Calendar:RuleBased",
+          "When": {
+            "DaysRelation": "OR",
+            "WeekDays": [
+              "NONE"
+            ],
+            "MonthDays": [
+              "ALL"
+            ]
+          }
+        }
+      }
+    },
+    "RUN_DAILY_REPORT": {
+      "Type": "Job:Command",
+      "SubApplication": "DAILY",
+      "CreatedBy": "A3807",
+      "RunAs": "A3807",
+      "Application": "REPORTING",
+      "Command": "echo Generating daily report... & hostname",
+      "When": {
+        "WeekDays": [
+          "NONE"
+        ],
+        "MonthDays": [
+          "ALL"
+        ],
+        "DaysRelation": "OR"
+      }
+    }
+  }
+}

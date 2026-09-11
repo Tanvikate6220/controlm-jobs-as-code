@@ -1,0 +1,15 @@
+{
+  "GUI_PAYMENTS_FOLDER": {
+    "Type": "Folder",
+    "ControlmServer": "M0988",
+    "OrderMethod": "Manual",
+    "PROCESS_PAYMENT_TXN": {
+      "Type": "Job:Command",
+      "SubApplication": "PAYMENTS",
+      "Host": "m0988",
+      "RunAs": "A3807",
+      "Application": "BILLING",
+      "Command": "echo Processing GUI Payment... & hostname"
+    }
+  }
+}

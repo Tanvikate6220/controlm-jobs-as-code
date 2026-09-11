@@ -1,0 +1,46 @@
+{
+  "MY_GUI_FOLDER": {
+    "Type": "Folder",
+    "ControlmServer": "M0988",
+    "ActiveRetentionPolicy": "CleanEndedOK",
+    "SubApplication": "PAYROLL",
+    "CreatedBy": "A3807",
+    "Application": "FINANCE_APP",
+    "When": {
+      "RuleBasedCalendars": {
+        "Included": [
+          "EVERYDAY"
+        ],
+        "EVERYDAY": {
+          "Type": "Calendar:RuleBased",
+          "When": {
+            "DaysRelation": "OR",
+            "WeekDays": [
+              "NONE"
+            ],
+            "MonthDays": [
+              "ALL"
+            ]
+          }
+        }
+      }
+    },
+    "RUN_PAYROLL_TAS": {
+      "Type": "Job:Command",
+      "SubApplication": "PAYROLL",
+      "CreatedBy": "A3807",
+      "RunAs": "A3807",
+      "Application": "FINANCE_APP",
+      "Command": "echo Running Payroll from GUI... & hostname",
+      "When": {
+        "WeekDays": [
+          "NONE"
+        ],
+        "MonthDays": [
+          "ALL"
+        ],
+        "DaysRelation": "OR"
+      }
+    }
+  }
+}

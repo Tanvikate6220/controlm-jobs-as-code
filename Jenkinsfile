@@ -1,6 +1,13 @@
 pipeline {
     agent any
 
+    triggers {
+        // Automatically syncs every 2 minutes in the background (Zero-Touch Automation)
+        cron('H/2 * * * *')
+        // Automatically triggers when a new commit is pushed to GitHub
+        pollSCM('H/2 * * * *')
+    }
+
     parameters {
         choice(
             name: 'ACTION',

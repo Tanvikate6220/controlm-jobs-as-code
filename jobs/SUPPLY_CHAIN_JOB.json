@@ -1,0 +1,21 @@
+﻿{
+  "Defaults": {
+    "Application": "LOGISTICS",
+    "SubApplication": "SUPPLY_CHAIN",
+    "RunAs": "A3807",
+    "Host": "m0988"
+  },
+  "SUPPLY_CHAIN_FOLDER": {
+    "Type": "Folder",
+    "ControlmServer": "M0988",
+    "OrderMethod": "Manual",
+    "TRACK_SHIPMENT_JOB": {
+      "Type": "Job:Command",
+      "Command": "echo [Phase 1] Tracking supply chain shipment... & hostname",
+      "Description": "Automated Logistics Tracking Job",
+      "When": {
+        "Schedule": "Never"
+      }
+    }
+  }
+}

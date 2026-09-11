@@ -1,0 +1,21 @@
+﻿{
+  "Defaults": {
+    "Application": "FINANCE_ENTERPRISE",
+    "SubApplication": "BILLING",
+    "RunAs": "A3807",
+    "Host": "m0988"
+  },
+  "BILLING_INVOICE_FOLDER": {
+    "Type": "Folder",
+    "ControlmServer": "M0988",
+    "OrderMethod": "Manual",
+    "GENERATE_DAILY_INVOICES": {
+      "Type": "Job:Command",
+      "Command": "echo [V1] Generating enterprise invoices... & hostname",
+      "Description": "Automated Billing & Invoice Generator",
+      "When": {
+        "Schedule": "Never"
+      }
+    }
+  }
+}

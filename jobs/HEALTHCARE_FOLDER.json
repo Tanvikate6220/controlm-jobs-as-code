@@ -1,0 +1,46 @@
+{
+  "HEALTHCARE_FOLDER": {
+    "Type": "Folder",
+    "ControlmServer": "M0988",
+    "ActiveRetentionPolicy": "CleanEndedOK",
+    "SubApplication": "PATIENT_CARE",
+    "CreatedBy": "A3807",
+    "Application": "HEALTHCARE_SYSTEM",
+    "When": {
+      "RuleBasedCalendars": {
+        "Included": [
+          "EVERYDAY"
+        ],
+        "EVERYDAY": {
+          "Type": "Calendar:RuleBased",
+          "When": {
+            "DaysRelation": "OR",
+            "WeekDays": [
+              "NONE"
+            ],
+            "MonthDays": [
+              "ALL"
+            ]
+          }
+        }
+      }
+    },
+    "PROCESS_PATIENT_RECORDS": {
+      "Type": "Job:Command",
+      "SubApplication": "PATIENT_CARE",
+      "CreatedBy": "A3807",
+      "RunAs": "A3807",
+      "Application": "HEALTHCARE_SYSTEM",
+      "Command": "echo [Phase 2] Processing patient health records... & hostname",
+      "When": {
+        "WeekDays": [
+          "NONE"
+        ],
+        "MonthDays": [
+          "ALL"
+        ],
+        "DaysRelation": "OR"
+      }
+    }
+  }
+}

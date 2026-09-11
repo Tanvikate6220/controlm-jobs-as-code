@@ -1,22 +1,29 @@
 {
-  "Defaults": {
-    "Application": "ECOMMERCE_SYSTEM",
-    "SubApplication": "ORDER_PROCESSING",
-    "RunAs": "A3807",
-    "Host": "m0988"
-  },
   "ORDER_FULFILLMENT_FOLDER": {
     "Type": "Folder",
     "ControlmServer": "M0988",
     "OrderMethod": "Manual",
+    "RunAs": "A3807",
+    "SubApplication": "ORDER_PROCESSING",
+    "Application": "ECOMMERCE_SYSTEM",
     "PROCESS_ECOMMERCE_ORDERS": {
       "Type": "Job:Command",
-      "Command": "echo [V1] Processing daily customer orders... & hostname",
-      "RunAs": "A3807",
+      "SubApplication": "ORDER_PROCESSING",
       "Host": "m0988",
       "Description": "Version 1.0 - Initial order fulfillment batch",
+      "RunAs": "A3807",
+      "Application": "ECOMMERCE_SYSTEM",
+      "Command": "echo [V1] Processing daily customer orders... & hostname",
       "When": {
-        "Schedule": "Never"
+        "WeekDays": [
+          "NONE"
+        ],
+        "Months": [
+          "NONE"
+        ],
+        "MonthDays": [
+          "NONE"
+        ]
       }
     }
   }

@@ -3,19 +3,19 @@ pipeline {
 
     parameters {
         choice(
+            name: 'ACTION',
+            choices: ['build_and_deploy', 'reverse_sync_gui_to_git', 'two_way_sync', 'build_only'],
+            description: 'build_and_deploy = Forward Git->Control-M sync & deletion; reverse_sync_gui_to_git = Sync GUI edits/deletions to GitHub; two_way_sync = Full 2-way reconciliation'
+        )
+        choice(
             name: 'DEPLOY_MODE',
             choices: ['delta', 'all'],
-            description: 'delta = Only configure new/modified JSON jobs in this commit; all = Full repo sync'
+            description: 'delta = Only process git changed/deleted jobs in this commit; all = Full scan'
         )
         choice(
             name: 'TARGET_ENV',
             choices: ['DEV', 'UAT', 'PROD'],
             description: 'Target Control-M Environment'
-        )
-        booleanParam(
-            name: 'DRY_RUN',
-            defaultValue: false,
-            description: 'If checked, validates (builds) without configuring in Control-M'
         )
     }
 
@@ -26,16 +26,38 @@ pipeline {
     }
 
     stages {
-        stage('Checkout & Setup') {
+        stage('Pipeline Initialization') {
             steps {
-                echo "Starting Control-M Jobs-as-Code Pipeline for Environment: ${params.TARGET_ENV} | Mode: ${params.DEPLOY_MODE}"
+                echo "================================================================="
+                echo "Control-M Jobs-as-Code Automation Engine"
+                echo "Action: ${params.ACTION} | Environment: ${params.TARGET_ENV} | Mode: ${params.DEPLOY_MODE}"
+                echo "================================================================="
+            }
+        }
+
+        stage('Reverse Sync (Control-M GUI -> GitHub)') {
+            when {
+                expression { return params.ACTION == 'reverse_sync_gui_to_git' }
+            }
+            steps {
+                script {
+                    echo "--> Pulling latest definitions from Control-M GUI and synchronizing GitHub..."
+                    if (isUnix()) {
+                        sh "python3 engine/ctm_pipeline_engine.py --action reverse-sync"
+                    } else {
+                        bat "python engine/ctm_pipeline_engine.py --action reverse-sync"
+                    }
+                }
             }
         }
 
         stage('Validate & Build (Jobs-as-Code)') {
+            when {
+                expression { return params.ACTION in ['build_and_deploy', 'build_only', 'two_way_sync'] }
+            }
             steps {
                 script {
-                    echo "--> Dynamically discovering and validating Control-M Job definitions..."
+                    echo "--> Dynamically validating Control-M Job JSON definitions..."
                     if (isUnix()) {
                         sh "python3 engine/ctm_pipeline_engine.py --mode ${params.DEPLOY_MODE} --action build"
                     } else {
@@ -45,13 +67,13 @@ pipeline {
             }
         }
 
-        stage('Configure in Control-M (Planning Domain)') {
+        stage('Configure in Control-M (Planning Domain & Deletions)') {
             when {
-                expression { return params.DRY_RUN == false }
+                expression { return params.ACTION in ['build_and_deploy', 'two_way_sync'] }
             }
             steps {
                 script {
-                    echo "--> Configuring and saving definitions directly in Control-M Planning Domain (${params.TARGET_ENV})..."
+                    echo "--> Configuring definitions and applying deletions in Control-M Planning (${params.TARGET_ENV})..."
                     if (isUnix()) {
                         sh "python3 engine/ctm_pipeline_engine.py --mode ${params.DEPLOY_MODE} --action deploy"
                     } else {
@@ -68,10 +90,11 @@ pipeline {
             archiveArtifacts artifacts: 'ctm-deploy-reports/**', allowEmptyArchive: true
         }
         success {
-            echo "SUCCESS: Control-M Jobs-as-Code pipeline completed cleanly! Jobs are now configured in the Planning Domain."
+            echo "SUCCESS: Control-M Jobs-as-Code automation completed cleanly!"
         }
         failure {
-            echo "FAILED: One or more jobs failed validation or configuration in Planning."
+            echo "FAILED: Pipeline encountered an error during execution."
         }
     }
 }
+

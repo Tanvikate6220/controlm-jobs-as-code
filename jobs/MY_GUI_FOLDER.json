@@ -31,7 +31,7 @@
       "CreatedBy": "A3807",
       "RunAs": "A3807",
       "Application": "FINANCE_APP",
-      "Command": "echo Running Payroll from GUI... & hostname",
+      "Command": "echo [V2 UPDATED] Running Payroll High Priority Batch... & hostname",
       "When": {
         "WeekDays": [
           "NONE"

@@ -4,8 +4,8 @@ pipeline {
     parameters {
         choice(
             name: 'ACTION',
-            choices: ['build_and_deploy', 'reverse_sync_gui_to_git', 'two_way_sync', 'build_only'],
-            description: 'build_and_deploy = Forward Git->Control-M sync & deletion; reverse_sync_gui_to_git = Sync GUI edits/deletions to GitHub; two_way_sync = Full 2-way reconciliation'
+            choices: ['reconcile_two_way', 'build_and_deploy', 'reverse_sync_gui_to_git', 'build_only'],
+            description: 'reconcile_two_way = Full automated bidirectional sync with conflict & loop protection; build_and_deploy = Forward Git->Control-M; reverse_sync_gui_to_git = Control-M GUI->GitHub'
         )
         choice(
             name: 'DEPLOY_MODE',
@@ -29,9 +29,25 @@ pipeline {
         stage('Pipeline Initialization') {
             steps {
                 echo "================================================================="
-                echo "Control-M Jobs-as-Code Automation Engine"
+                echo "Control-M Jobs-as-Code Two-Way Reconciliation Engine"
                 echo "Action: ${params.ACTION} | Environment: ${params.TARGET_ENV} | Mode: ${params.DEPLOY_MODE}"
                 echo "================================================================="
+            }
+        }
+
+        stage('Two-Way Bidirectional Reconciliation') {
+            when {
+                expression { return params.ACTION == 'reconcile_two_way' }
+            }
+            steps {
+                script {
+                    echo "--> Running SHA-256 Hash-Based Bidirectional Reconciliation..."
+                    if (isUnix()) {
+                        sh "python3 engine/ctm_reconciliation_engine.py"
+                    } else {
+                        bat "python engine/ctm_reconciliation_engine.py"
+                    }
+                }
             }
         }
 
@@ -53,7 +69,7 @@ pipeline {
 
         stage('Validate & Build (Jobs-as-Code)') {
             when {
-                expression { return params.ACTION in ['build_and_deploy', 'build_only', 'two_way_sync'] }
+                expression { return params.ACTION in ['build_and_deploy', 'build_only'] }
             }
             steps {
                 script {
@@ -69,7 +85,7 @@ pipeline {
 
         stage('Configure in Control-M (Planning Domain & Deletions)') {
             when {
-                expression { return params.ACTION in ['build_and_deploy', 'two_way_sync'] }
+                expression { return params.ACTION == 'build_and_deploy' }
             }
             steps {
                 script {
@@ -97,4 +113,5 @@ pipeline {
         }
     }
 }
+
 

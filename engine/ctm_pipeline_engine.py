@@ -204,7 +204,7 @@ class ControlMAutomationEngine:
     def validate_controlm_json_schema(self, file_path: Path) -> Tuple[bool, str]:
         """Validates Control-M 9.0.22 Jobs-as-Code structure locally."""
         try:
-            with open(file_path, "r", encoding="utf-8") as f:
+            with open(file_path, "r", encoding="utf-8-sig") as f:
                 data = json.load(f)
 
             if not isinstance(data, dict):
@@ -332,7 +332,7 @@ class ControlMAutomationEngine:
         local_folder_map: Dict[str, Path] = {}
         for f in local_files:
             try:
-                with open(f, "r", encoding="utf-8") as jf:
+                with open(f, "r", encoding="utf-8-sig") as jf:
                     data = json.load(jf)
                 for k, v in data.items():
                     if k not in ["Defaults", "Description"] and isinstance(v, dict):
@@ -378,7 +378,7 @@ class ControlMAutomationEngine:
             existing_content = ""
             if target_file.exists():
                 try:
-                    with open(target_file, "r", encoding="utf-8") as f:
+                    with open(target_file, "r", encoding="utf-8-sig") as f:
                         existing_content = f.read()
                 except Exception:
                     pass
